@@ -34,7 +34,9 @@ class TemplateContentScript extends ContentScript {
     log.debug('showLoginFormAndWaitForAuthentication start')
     await this.clickAndWait(loginLinkSelector, '#username')
     await this.setWorkerState({ visible: true })
-    await this.runInWorkerUntilTrue({ method: 'waitForAuthenticated' })
+    await this.runInWorkerUntilTrue({
+      method: 'waitForAuthenticated'
+    })
     await this.setWorkerState({ visible: false })
   }
 
@@ -62,11 +64,11 @@ class TemplateContentScript extends ContentScript {
   async parseBills() {
     const articles = document.querySelectorAll('article')
     return Array.from(articles).map(article => ({
-      amount: normalizePrice(article.querySelector('.price_color').innerHTML),
-      filename: article.querySelector('h3 a').getAttribute('title'),
+      amount: normalizePrice(article.querySelector('.price_color')?.innerHTML),
+      filename: article.querySelector('h3 a')?.getAttribute('title'),
       fileurl:
         'https://books.toscrape.com/' +
-        article.querySelector('img').getAttribute('src')
+        article.querySelector('img')?.getAttribute('src')
     }))
   }
 }
@@ -78,5 +80,5 @@ function normalizePrice(price) {
 
 const connector = new TemplateContentScript()
 connector.init({ additionalExposedMethodsNames: ['parseBills'] }).catch(err => {
-  console.warn(err)
+  log.warn(err)
 })

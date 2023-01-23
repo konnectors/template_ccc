@@ -4,8 +4,8 @@ module.exports = {
   plugins: [
     new HookShellScriptPlugin({
       afterCompile: [
-        `node ./scripts/generateWebViewContentScript.js ${__dirname}`,
-      ],
-    }),
-  ],
+        `node ./scripts/generateWebViewContentScript.js ${__dirname}`
+      ]
+    })
+  ]
 }
