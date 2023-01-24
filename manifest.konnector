@@ -12,5 +12,8 @@
     "transport"
   ],
   "fields": { },
-  "clientSide": true
+  "clientSide": true,
+  "langs": [
+    "fr"
+  ]
 }
