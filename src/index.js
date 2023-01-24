@@ -1,4 +1,4 @@
-import { ContentScript } from 'cozy-ccc-libs/src/contentscript'
+import { ContentScript } from 'cozy-ccc-libs/src/contentscript' // FIXME replace src with dist when 0.3.0 version of cozy-ccc-libs is published
 import Minilog from '@cozy/minilog'
 const log = Minilog('ContentScript')
 Minilog.enable()
