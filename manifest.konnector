@@ -5,7 +5,7 @@
   "language": "node",
   "icon": "icon.svg",
   "slug": "template",
-  "source": "git@github.com:konnectors/template.git",
+  "source": "git@github.com:konnectors/template_ccc.git",
   "editor": "Cozy",
   "vendor_link": "https://books.toscrape.com/",
   "categories": [
@@ -15,5 +15,22 @@
   "clientSide": true,
   "langs": [
     "fr"
-  ]
+  ],
+  "locales": {
+    "fr": {
+      "short_description": "Récupère la liste de livres",
+      "long_description": "Récupère la liste de livre sur le site exemple",
+      "permissions": {
+        "bills": {
+          "description": "Utilisé pour sauver les données des factures"
+        },
+        "files": {
+          "description": "Utilisé pour sauvegarder les factures"
+        },
+        "accounts": {
+          "description": "Utilisé pour obtenir les données du compte"
+        }
+      }
+    }
+  }
 }
