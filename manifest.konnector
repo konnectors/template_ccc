@@ -16,6 +16,17 @@
   "langs": [
     "fr"
   ],
+  "permissions": {
+    "bills": {
+      "type": "io.cozy.bills"
+    },
+    "files": {
+      "type": "io.cozy.files"
+    },
+    "accounts": {
+      "type": "io.cozy.accounts"
+    }
+  },
   "locales": {
     "fr": {
       "short_description": "Récupère la liste de livres",
