@@ -48,11 +48,13 @@ class TemplateContentScript extends ContentScript {
     await this.clickAndWait(bookLinkSelector, '#promotions')
     const bills = await this.runInWorker('parseBills')
 
-    await this.saveFiles(bills, {
-      contentType: 'image/jpeg',
-      fileIdAttributes: ['filename'],
-      context
-    })
+    for (const bill of bills) {
+      await this.saveFiles([bill], {
+        contentType: 'image/jpeg',
+        fileIdAttributes: ['filename'],
+        context
+      })
+    }
   }
 
   async getUserDataFromWebsite() {
