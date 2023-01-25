@@ -3,7 +3,7 @@
   "name": "Template",
   "type": "konnector",
   "language": "node",
-  "icon": "icon.svg",
+  "icon": "icon.png",
   "slug": "template",
   "source": "git@github.com:konnectors/template_ccc.git",
   "editor": "Cozy",
