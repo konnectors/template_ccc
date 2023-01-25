@@ -28,7 +28,6 @@
     "travisDeployKey": "./bin/generate_travis_deploy_key"
   },
   "devDependencies": {
-    "cozy-konnector-build": "^1.4.4",
-    "hook-shell-script-webpack-plugin": "^0.1.4"
+    "cozy-konnector-build": "^1.4.4"
   }
 }
