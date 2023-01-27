@@ -16,6 +16,11 @@
   "langs": [
     "fr"
   ],
+  "folders": [
+    {
+      "defaultDir": "$administrative/$konnector/$account"
+    }
+  ],
   "permissions": {
     "bills": {
       "type": "io.cozy.bills"
@@ -34,9 +39,6 @@
         },
         "files": {
           "description": "Utilisé pour sauvegarder les factures"
-        },
-        "accounts": {
-          "description": "Utilisé pour obtenir les données du compte"
         }
       }
     }
