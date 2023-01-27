@@ -16,6 +16,11 @@
   "langs": [
     "fr"
   ],
+  "folders": [
+    {
+      "defaultDir": "$administrative/$konnector/$account"
+    }
+  ],
   "permissions": {
     "bills": {
       "type": "io.cozy.bills"
