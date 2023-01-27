@@ -1,11 +1,10 @@
-const HookShellScriptPlugin = require('hook-shell-script-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
+
 module.exports = {
   mode: 'none',
   plugins: [
-    new HookShellScriptPlugin({
-      afterCompile: [
-        `node ./scripts/generateWebViewContentScript.js ${__dirname}`,
-      ],
-    }),
-  ],
+    new CopyPlugin({
+      patterns: [{ from: 'manifest.konnector' }, { from: 'assets' }]
+    })
+  ]
 }

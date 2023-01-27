@@ -1,19 +1,33 @@
 {
   "name": "template",
   "version": "1.0.0",
-  "main": "index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:konnectors/template_ccc.git"
+  },
   "dependencies": {
     "@cozy/minilog": "^1.0.0",
+    "cozy-ccc-libs": "^0.2.0",
     "date-fns": "^2.21.1"
   },
+  "eslintConfig": {
+    "extends": [
+      "cozy-app"
+    ]
+  },
+  "eslintIgnore": [
+    "dist"
+  ],
   "scripts": {
+    "lint": "eslint --fix .",
     "build": "webpack",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "deploy": "git-directory-deploy --directory dist/ --branch ${DEPLOY_BRANCH:-build} --repo=${DEPLOY_REPOSITORY:-$npm_package_repository_url}",
+    "cozyPublish": "cozy-app-publish --token $REGISTRY_TOKEN --build-commit $(git rev-parse ${DEPLOY_BRANCH:-build})",
+    "travisDeployKey": "./bin/generate_travis_deploy_key"
   },
   "devDependencies": {
-    "hook-shell-script-webpack-plugin": "^0.1.4",
-    "webpack": "^4",
-    "webpack-cli": "^3"
+    "cozy-konnector-build": "^1.4.4"
   }
 }
