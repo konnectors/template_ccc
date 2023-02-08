@@ -20,7 +20,7 @@ class TemplateContentScript extends ContentScript {
     ])
     const authenticated = await this.runInWorker('checkAuthenticated')
     if (!authenticated) {
-      this.log('not authenticated')
+      this.log('info', 'Not authenticated')
       await this.showLoginFormAndWaitForAuthentication()
     }
     return true
