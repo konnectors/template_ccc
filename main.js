@@ -322,7 +322,7 @@ var ContentScript = /*#__PURE__*/function () {
      * @param {object} options        - options object
      * @param {string} options.method - name of the method to run
      * @param {number} [options.timeout] - number of miliseconds before the function sends a timeout error. Default Infinity
-     * @param {Array} options.args - array of args to pass to the method
+     * @param {Array} [options.args] - array of args to pass to the method
      * @returns {Promise<boolean>} - true
      * @throws {Error} - if timeout expired
      */
@@ -6331,7 +6331,7 @@ var __webpack_exports__ = {};
 (() => {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var cozy_clisk_contentscript__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var cozy_clisk_dist_contentscript__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _cozy_minilog__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(73);
 /* harmony import */ var _cozy_minilog__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_cozy_minilog__WEBPACK_IMPORTED_MODULE_1__);
 
@@ -6344,7 +6344,7 @@ const defaultSelector = "a[href='http://quotes.toscrape.com']"
 const loginLinkSelector = `[href='/login']`
 const logoutLinkSelector = `[href='/logout']`
 
-class TemplateContentScript extends cozy_clisk_contentscript__WEBPACK_IMPORTED_MODULE_0__.ContentScript {
+class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPORTED_MODULE_0__.ContentScript {
   async ensureAuthenticated() {
     await this.goto(baseUrl)
     await this.waitForElementInWorker(defaultSelector)
