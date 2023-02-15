@@ -2040,10 +2040,10 @@ cozy-client@^34.11.0:
     sift "^6.0.0"
     url-search-params-polyfill "^8.0.0"
 
-cozy-clisk@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/cozy-clisk/-/cozy-clisk-0.5.0.tgz#c557de3a38993420b9b8f0b4b84510c866e0114d"
-  integrity sha512-etFHBCHNUBAv/HgNWtb/u1GhjyuAbYMqv2nSFHhLNDVCoTMZ4d0IProNQUL5mRZrUPDOMeKsK4FtlfAu5g4RnA==
+cozy-clisk@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/cozy-clisk/-/cozy-clisk-0.7.0.tgz#dcb2da9122f79e82507196299fcfd73ca6e0b554"
+  integrity sha512-MFKg3hnRe5F6aKXqR4/FDpFvphP5hzHBRZEOOxNA8kRGUfruxLDXwa5n95Sep4G4cFuerhXgLhzO9uZep8GEng==
   dependencies:
     "@cozy/minilog" "^1.0.0"
     bluebird-retry "^0.11.0"
@@ -4109,9 +4109,9 @@ react-is@^17.0.1, react-is@^17.0.2:
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
 react-redux@^7.2.0:
-  version "7.2.9"
-  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.9.tgz#09488fbb9416a4efe3735b7235055442b042481d"
-  integrity sha512-Gx4L3uM182jEEayZfRbI/G11ZpYdNAnBs70lFVMNdHJI76XYtR+7m0MN+eAs7UHBPhWXcnFPaS+9owSCJQHNpQ==
+  version "7.2.7"
+  resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-7.2.7.tgz#f5edd4e4bc34ec8787451d77d16663abf12f8be9"
+  integrity sha512-kpstUHhXgT5HOLwzoRhDr3AWHO7H5mgTN5pX1H02OuoIMaZiOLYlul8vgan2WE8eEttAEMew8Npgzd3C6Asdow==
   dependencies:
     "@babel/runtime" "^7.15.4"
     "@types/react-redux" "^7.1.20"

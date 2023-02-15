@@ -1,4 +1,4 @@
-import { ContentScript } from 'cozy-clisk/contentscript'
+import { ContentScript } from 'cozy-clisk/dist/contentscript'
 import Minilog from '@cozy/minilog'
 const log = Minilog('ContentScript')
 Minilog.enable()
