@@ -7,22 +7,74 @@ const baseUrl = 'http://toscrape.com'
 const defaultSelector = "a[href='http://quotes.toscrape.com']"
 const loginLinkSelector = `[href='/login']`
 const logoutLinkSelector = `[href='/logout']`
-
 class TemplateContentScript extends ContentScript {
   async ensureAuthenticated() {
+    const startTime = Date.now()
+    this.log('debug', '🛡️ ensureAuthenticated START')
     await this.goto(baseUrl)
+    this.log(
+      'debug',
+      `🛡️ ensureAuthenticated goto(baseUrl) DONE in ${(
+        (Date.now() - startTime) *
+        0.001
+      ).toFixed(2)}s`
+    )
     await this.waitForElementInWorker(defaultSelector)
+    this.log(
+      'debug',
+      `🛡️ ensureAuthenticated waitForElementInWorker(defaultSelector) DONE in ${(
+        (Date.now() - startTime) *
+        0.001
+      ).toFixed(2)}s`
+    )
     await this.runInWorker('click', defaultSelector)
+    this.log(
+      'debug',
+      `🛡️ ensureAuthenticated runInWorker(click, defaultSelector) DONE in ${(
+        (Date.now() - startTime) *
+        0.001
+      ).toFixed(2)}s`
+    )
     // wait for both logout or login link to be sure to check authentication when ready
     await Promise.race([
       this.waitForElementInWorker(loginLinkSelector),
       this.waitForElementInWorker(logoutLinkSelector)
     ])
+    this.log(
+      'debug',
+      `🛡️ ensureAuthenticated Promise.race([this.waitForElementInWorker(loginLinkSelector),this.waitForElementInWorker(logoutLinkSelector)]) DONE in ${(
+        (Date.now() - startTime) *
+        0.001
+      ).toFixed(2)}s`
+    )
+
     const authenticated = await this.runInWorker('checkAuthenticated')
+    this.log(
+      'debug',
+      `🛡️ ensureAuthenticated this.runInWorker(checkAuthenticated) DONE in ${(
+        (Date.now() - startTime) *
+        0.001
+      ).toFixed(2)}s`
+    )
     if (!authenticated) {
       this.log('info', 'Not authenticated')
       await this.showLoginFormAndWaitForAuthentication()
+      this.log(
+        'debug',
+        `🛡️ ensureAuthenticated (if not authenticated) this.showLoginFormAndWaitForAuthentication() DONE in ${(
+          (Date.now() - startTime) *
+          0.001
+        ).toFixed(2)}s`
+      )
     }
+
+    this.log(
+      'debug',
+      `🛡️ ensureAuthenticated END in ${(
+        (Date.now() - startTime) *
+        0.001
+      ).toFixed(2)}s`
+    )
     return true
   }
 
