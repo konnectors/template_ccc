@@ -3,7 +3,7 @@ import Minilog from '@cozy/minilog'
 const log = Minilog('ContentScript')
 Minilog.enable()
 
-const baseUrl = 'http://toscrape.com'
+const baseUrl = 'https://toscrape.com'
 const defaultSelector = "a[href='http://quotes.toscrape.com']"
 const loginLinkSelector = `[href='/login']`
 const logoutLinkSelector = `[href='/logout']`
@@ -42,10 +42,8 @@ class TemplateContentScript extends ContentScript {
 
   async fetch(context) {
     log.debug(context, 'fetch context')
-    const bookLinkSelector = `[href*='books.toscrape.com']`
-    await this.goto(baseUrl + '/index.html')
-    await this.waitForElementInWorker(bookLinkSelector)
-    await this.clickAndWait(bookLinkSelector, '#promotions')
+    await this.goto('https://books.toscrape.com')
+    await this.waitForElementInWorker('#promotions')
     const bills = await this.runInWorker('parseBills')
 
     for (const bill of bills) {
