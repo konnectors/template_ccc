@@ -3,6 +3,9 @@ import Minilog from '@cozy/minilog'
 const log = Minilog('ContentScript')
 Minilog.enable()
 
+const getTime = startTime => ((Date.now() - startTime) * 0.001).toFixed(2)
+const formatFromMs = ms => (ms * 0.001).toFixed(2)
+
 const baseUrl = 'http://toscrape.com'
 const defaultSelector = "a[href='http://quotes.toscrape.com']"
 const loginLinkSelector = `[href='/login']`
@@ -93,13 +96,45 @@ class TemplateContentScript extends ContentScript {
   }
 
   async fetch(context) {
+    const startTime = Date.now()
+    this.log('debug', `📥 fetch() - START at 0s`)
+
     log.debug(context, 'fetch context')
     const bookLinkSelector = `[href*='books.toscrape.com']`
+    const timer0 = Date.now()
     await this.goto(baseUrl + '/index.html')
+    this.log(
+      'debug',
+      `📥 fetch() - await this.goto(baseUrl + '/index.html') - START at ${formatFromMs(
+        timer0 - startTime
+      )}s, DONE in ${getTime(timer0)}s`
+    )
+    const timer1 = Date.now()
     await this.waitForElementInWorker(bookLinkSelector)
+    this.log(
+      'debug',
+      `📥 fetch() - await this.waitForElementInWorker(bookLinkSelector) - START at ${formatFromMs(
+        timer1 - startTime
+      )}s, DONE in ${getTime(timer1)}s`
+    )
+    const timer2 = Date.now()
     await this.clickAndWait(bookLinkSelector, '#promotions')
+    this.log(
+      'debug',
+      `📥 fetch() - await this.clickAndWait(bookLinkSelector, '#promotions') - START at ${formatFromMs(
+        timer2 - startTime
+      )}s, DONE in ${getTime(timer2)}s`
+    )
+    const timer3 = Date.now()
     const bills = await this.runInWorker('parseBills')
+    this.log(
+      'debug',
+      `📥 fetch() - await this.runInWorker('parseBills') - START at ${formatFromMs(
+        timer3 - startTime
+      )}s, DONE in ${getTime(timer3)}s`
+    )
 
+    const timer4 = Date.now()
     for (const bill of bills) {
       await this.saveFiles([bill], {
         contentType: 'image/jpeg',
@@ -107,6 +142,12 @@ class TemplateContentScript extends ContentScript {
         context
       })
     }
+    this.log(
+      'debug',
+      `📥 fetch() - await this.saveFiles([bill], {...}) - START at ${formatFromMs(
+        timer4 - startTime
+      )}s, DONE in ${getTime(timer4)}s`
+    )
   }
 
   async getUserDataFromWebsite() {
