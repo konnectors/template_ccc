@@ -6339,7 +6339,7 @@ __webpack_require__.r(__webpack_exports__);
 const log = _cozy_minilog__WEBPACK_IMPORTED_MODULE_1___default()('ContentScript')
 _cozy_minilog__WEBPACK_IMPORTED_MODULE_1___default().enable()
 
-const baseUrl = 'http://toscrape.com'
+const baseUrl = 'https://toscrape.com'
 const defaultSelector = "a[href='http://quotes.toscrape.com']"
 const loginLinkSelector = `[href='/login']`
 const logoutLinkSelector = `[href='/logout']`
@@ -6378,10 +6378,8 @@ class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPOR
 
   async fetch(context) {
     log.debug(context, 'fetch context')
-    const bookLinkSelector = `[href*='books.toscrape.com']`
-    await this.goto(baseUrl + '/index.html')
-    await this.waitForElementInWorker(bookLinkSelector)
-    await this.clickAndWait(bookLinkSelector, '#promotions')
+    await this.goto('https://books.toscrape.com')
+    await this.waitForElementInWorker('#promotions')
     const bills = await this.runInWorker('parseBills')
 
     for (const bill of bills) {
