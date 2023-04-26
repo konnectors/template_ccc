@@ -5039,7 +5039,7 @@ const loginLinkSelector = `[href='/login']`
 const logoutLinkSelector = `[href='/logout']`
 
 class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPORTED_MODULE_0__.ContentScript {
-  async ensureAuthenticated() {
+  async navigateToLoginForm() {
     await this.goto(baseUrl)
     await this.waitForElementInWorker(defaultSelector)
     await this.runInWorker('click', defaultSelector)
@@ -5048,11 +5048,30 @@ class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPOR
       this.waitForElementInWorker(loginLinkSelector),
       this.waitForElementInWorker(logoutLinkSelector)
     ])
+  }
+
+  async ensureAuthenticated() {
+    await this.goto(baseUrl)
+    await this.waitForElementInWorker(defaultSelector)
+    await this.runInWorker('click', defaultSelector)
+    await this.ensureNotAuthenticated()
+    await this.navigateToLoginForm()
     const authenticated = await this.runInWorker('checkAuthenticated')
     if (!authenticated) {
       this.log('info', 'Not authenticated')
       await this.showLoginFormAndWaitForAuthentication()
     }
+    return true
+  }
+
+  async ensureNotAuthenticated() {
+    await this.navigateToLoginForm()
+    const authenticated = await this.runInWorker('checkAuthenticated')
+    if (!authenticated) {
+      return true
+    }
+
+    await this.clickAndWait(logoutLinkSelector, loginLinkSelector)
     return true
   }
 
