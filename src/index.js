@@ -21,10 +21,6 @@ class TemplateContentScript extends ContentScript {
   }
 
   async ensureAuthenticated() {
-    await this.goto(baseUrl)
-    await this.waitForElementInWorker(defaultSelector)
-    await this.runInWorker('click', defaultSelector)
-    await this.ensureNotAuthenticated()
     await this.navigateToLoginForm()
     const authenticated = await this.runInWorker('checkAuthenticated')
     if (!authenticated) {
