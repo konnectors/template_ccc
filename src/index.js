@@ -10,6 +10,7 @@ const logoutLinkSelector = `[href='/logout']`
 
 class TemplateContentScript extends ContentScript {
   async navigateToLoginForm() {
+    this.log('info', '🤖 navigateToLoginForm')
     await this.goto(baseUrl)
     await this.waitForElementInWorker(defaultSelector)
     await this.runInWorker('click', defaultSelector)
@@ -20,7 +21,8 @@ class TemplateContentScript extends ContentScript {
     ])
   }
 
-  async ensureAuthenticated() {
+  async ensureAuthenticated({ account }) {
+    this.log('info', '🤖 ensureAuthenticated')
     await this.navigateToLoginForm()
     const authenticated = await this.runInWorker('checkAuthenticated')
     if (!authenticated) {
@@ -31,6 +33,7 @@ class TemplateContentScript extends ContentScript {
   }
 
   async ensureNotAuthenticated() {
+    this.log('info', '🤖 ensureNotAuthenticated')
     await this.navigateToLoginForm()
     const authenticated = await this.runInWorker('checkAuthenticated')
     if (!authenticated) {
@@ -56,7 +59,7 @@ class TemplateContentScript extends ContentScript {
   }
 
   async fetch(context) {
-    log.debug(context, 'fetch context')
+    this.log('info', '🤖 fetch')
     await this.goto('https://books.toscrape.com')
     await this.waitForElementInWorker('#promotions')
     const bills = await this.runInWorker('parseBills')
@@ -71,6 +74,7 @@ class TemplateContentScript extends ContentScript {
   }
 
   async getUserDataFromWebsite() {
+    this.log('info', '🤖 getUserDataFromWebsite')
     return {
       sourceAccountIdentifier: 'defaultTemplateSourceAccountIdentifier'
     }
