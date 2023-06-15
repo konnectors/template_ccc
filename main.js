@@ -5111,6 +5111,7 @@ const logoutLinkSelector = `[href='/logout']`
 
 class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPORTED_MODULE_0__.ContentScript {
   async navigateToLoginForm() {
+    this.log('info', '🤖 navigateToLoginForm')
     await this.goto(baseUrl)
     await this.waitForElementInWorker(defaultSelector)
     await this.runInWorker('click', defaultSelector)
@@ -5121,7 +5122,11 @@ class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPOR
     ])
   }
 
-  async ensureAuthenticated() {
+  async ensureAuthenticated({ account }) {
+    this.log('info', '🤖 ensureAuthenticated')
+    if (!account) {
+      await this.ensureNotAuthenticated()
+    }
     await this.navigateToLoginForm()
     const authenticated = await this.runInWorker('checkAuthenticated')
     if (!authenticated) {
@@ -5132,6 +5137,7 @@ class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPOR
   }
 
   async ensureNotAuthenticated() {
+    this.log('info', '🤖 ensureNotAuthenticated')
     await this.navigateToLoginForm()
     const authenticated = await this.runInWorker('checkAuthenticated')
     if (!authenticated) {
@@ -5157,7 +5163,7 @@ class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPOR
   }
 
   async fetch(context) {
-    log.debug(context, 'fetch context')
+    this.log('info', '🤖 fetch')
     await this.goto('https://books.toscrape.com')
     await this.waitForElementInWorker('#promotions')
     const bills = await this.runInWorker('parseBills')
@@ -5172,6 +5178,7 @@ class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPOR
   }
 
   async getUserDataFromWebsite() {
+    this.log('info', '🤖 getUserDataFromWebsite')
     return {
       sourceAccountIdentifier: 'defaultTemplateSourceAccountIdentifier'
     }
