@@ -22,17 +22,11 @@
     }
   ],
   "permissions": {
-    "carbon_copy": {
-      "type": "io.cozy.certified.carbon_copy"
-    },
     "bills": {
       "type": "io.cozy.bills"
     },
     "files": {
       "type": "io.cozy.files"
-    },
-    "identities": {
-      "type": "io.cozy.identities"
     }
   },
   "locales": {
@@ -40,9 +34,6 @@
       "short_description": "Récupère la liste de livres",
       "long_description": "Récupère la liste de livre sur le site exemple",
       "permissions": {
-        "carbon_copy": {
-          "description": "Utilisé pour certifier que vos fichiers sont copie conforme avec les documents d'origine"
-        },
         "bills": {
           "description": "Utilisé pour sauver les données des factures"
         },
