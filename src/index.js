@@ -95,13 +95,11 @@ class TemplateContentScript extends ContentScript {
     await this.waitForElementInWorker('#promotions')
     const bills = await this.runInWorker('parseBills')
 
-    for (const bill of bills) {
-      await this.saveFiles([bill], {
-        contentType: 'image/jpeg',
-        fileIdAttributes: ['filename'],
-        context
-      })
-    }
+    await this.saveFiles(bills, {
+      contentType: 'image/jpeg',
+      fileIdAttributes: ['filename'],
+      context
+    })
   }
 
   async getUserDataFromWebsite() {
