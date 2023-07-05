@@ -21,7 +21,21 @@ class TemplateContentScript extends ContentScript {
     ])
   }
 
+  onWorkerEvent(event, payload) {
+    if (event === 'loginSubmit') {
+      this.log('info', 'received loginSubmit, blocking user interactions')
+      this.blockWorkerInteractions()
+    } else if (event === 'loginError') {
+      this.log(
+        'info',
+        'received loginError, unblocking user interactions: ' + payload?.msg
+      )
+      this.unblockWorkerInteractions()
+    }
+  }
+
   async ensureAuthenticated({ account }) {
+    this.bridge.addEventListener('workerEvent', this.onWorkerEvent.bind(this))
     this.log('info', '🤖 ensureAuthenticated')
     if (!account) {
       await this.ensureNotAuthenticated()
@@ -32,6 +46,7 @@ class TemplateContentScript extends ContentScript {
       this.log('info', 'Not authenticated')
       await this.showLoginFormAndWaitForAuthentication()
     }
+    this.unblockWorkerInteractions()
     return true
   }
 
@@ -45,6 +60,19 @@ class TemplateContentScript extends ContentScript {
 
     await this.clickAndWait(logoutLinkSelector, loginLinkSelector)
     return true
+  }
+
+  onWorkerReady() {
+    const button = document.querySelector('input[type=submit]')
+    if (button) {
+      button.addEventListener('click', () =>
+        this.bridge.emit('workerEvent', 'loginSubmit')
+      )
+    }
+    const error = document.querySelector('.error')
+    if (error) {
+      this.bridge.emit('workerEvent', 'loginError', { msg: error.innerHTML })
+    }
   }
 
   async checkAuthenticated() {
