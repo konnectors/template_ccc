@@ -5494,7 +5494,7 @@ class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPOR
     ])
   }
 
-  onWorkerEvent(event, payload) {
+  onWorkerEvent({ event, payload }) {
     if (event === 'loginSubmit') {
       this.log('info', 'received loginSubmit, blocking user interactions')
       this.blockWorkerInteractions()
@@ -5536,16 +5536,21 @@ class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPOR
   }
 
   onWorkerReady() {
-    const button = document.querySelector('input[type=submit]')
-    if (button) {
-      button.addEventListener('click', () =>
-        this.bridge.emit('workerEvent', 'loginSubmit')
-      )
-    }
-    const error = document.querySelector('.error')
-    if (error) {
-      this.bridge.emit('workerEvent', 'loginError', { msg: error.innerHTML })
-    }
+    window.addEventListener('DOMContentLoaded', () => {
+      const button = document.querySelector('input[type=submit]')
+      if (button) {
+        button.addEventListener('click', () =>
+          this.bridge.emit('workerEvent', { event: 'loginSubmit' })
+        )
+      }
+      const error = document.querySelector('.error')
+      if (error) {
+        this.bridge.emit('workerEvent', {
+          event: 'loginError',
+          payload: { msg: error.innerHTML }
+        })
+      }
+    })
   }
 
   async checkAuthenticated() {
