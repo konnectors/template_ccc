@@ -29,6 +29,10 @@
       "type": "io.cozy.files"
     }
   },
+  "developer": {
+    "name": "Cozy Cloud",
+    "url": "https://cozy.io"
+  },
   "locales": {
     "fr": {
       "short_description": "Récupère la liste de livres",
