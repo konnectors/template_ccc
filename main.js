@@ -6803,6 +6803,7 @@ class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPOR
   }
 
   async fetch(context) {
+    console.log('👅👅👅 new log')
     console.log('👅👅👅 context', JSON.stringify(context, null, 2))
     this.log('info', '🤖 fetch')
     await this.goto('https://file-examples.com')
