@@ -27,6 +27,9 @@
     },
     "files": {
       "type": "io.cozy.files"
+    },
+    "identities": {
+      "type": "io.cozy.identities"
     }
   },
   "developer": {
