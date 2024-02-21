@@ -5778,11 +5778,14 @@ class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPOR
     await this.waitForElementInWorker('#promotions')
     const bills = await this.runInWorker('parseBills')
 
-    await this.saveFiles(bills, {
+    await this.saveBills(bills, {
       contentType: 'image/jpeg',
       fileIdAttributes: ['filename'],
       context
     })
+
+    const identity = await this.runInWorker('parseIdentity')
+    await this.saveIdentity(identity)
   }
 
   async getUserDataFromWebsite() {
@@ -5796,11 +5799,32 @@ class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPOR
     const articles = document.querySelectorAll('article')
     return Array.from(articles).map(article => ({
       amount: normalizePrice(article.querySelector('.price_color')?.innerHTML),
+      date: '2024-01-01', // use a fixed date to avoid the multiplication of bills
+      vendor: 'template',
       filename: article.querySelector('h3 a')?.getAttribute('title'),
       fileurl:
         'https://books.toscrape.com/' +
         article.querySelector('img')?.getAttribute('src')
     }))
+  }
+
+  async parseIdentity() {
+    const contact = {
+      name: {
+        givenName: 'John',
+        familyName: 'Doe'
+      },
+      address: [
+        {
+          street: '2 rue du moulin',
+          postcode: '00000',
+          city: 'Paris',
+          formattedAddress: '2 rue du moulin 00000 Paris'
+        }
+      ],
+      email: [{ address: 'mail@mail.com' }]
+    }
+    return { contact }
   }
 }
 
@@ -5810,9 +5834,11 @@ function normalizePrice(price) {
 }
 
 const connector = new TemplateContentScript()
-connector.init({ additionalExposedMethodsNames: ['parseBills'] }).catch(err => {
-  log.warn(err)
-})
+connector
+  .init({ additionalExposedMethodsNames: ['parseBills', 'parseIdentity'] })
+  .catch(err => {
+    log.warn(err)
+  })
 
 })();
 
