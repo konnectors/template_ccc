@@ -184,6 +184,9 @@ var ContentScript = exports["default"] = /*#__PURE__*/function () {
       this.requestInterceptor = options.requestInterceptor;
       this.requestInterceptor.setLogger(this.log.bind(this));
     }
+    if (options.recordOptions) {
+      this.recordOptions = options.recordOptions;
+    }
   }
   /**
    * Init the bridge communication with the launcher.
@@ -285,6 +288,7 @@ var ContentScript = exports["default"] = /*#__PURE__*/function () {
               throw new Error('No bridge is defined, you should call ContentScript.init before using this method');
             case 5:
               if (contentScriptType === WORKER_TYPE) {
+                console.log('🐛🐛🐛 options.shouldRecord', options.shouldRecord);
                 this.initRecorder(options.shouldRecord);
                 this.onWorkerReady();
                 (_this$requestIntercep = this.requestInterceptor) === null || _this$requestIntercep === void 0 || _this$requestIntercep.on('response', function (response) {
@@ -1864,18 +1868,17 @@ var ContentScript = exports["default"] = /*#__PURE__*/function () {
   }, {
     key: "initRecorder",
     value: function initRecorder(shouldRecord) {
-      console.log('🐛🐛🐛 shouldRecord', shouldRecord);
       if (!shouldRecord) {
         return;
       }
-      (0, _record.record)({
+      (0, _record.record)(_objectSpread({
         emit: function emit(event) {
           var _window$ReactNativeWe;
           (_window$ReactNativeWe = window.ReactNativeWebView) === null || _window$ReactNativeWe === void 0 || _window$ReactNativeWe.postMessage(JSON.stringify(_objectSpread(_objectSpread({}, event), {}, {
             messageType: 'rrweb'
           })));
         }
-      });
+      }, this.recordOptions));
     }
   }]);
   return ContentScript;
