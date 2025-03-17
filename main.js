@@ -18523,7 +18523,6 @@ class TemplateContentScript extends cozy_clisk_dist_contentscript__WEBPACK_IMPOR
   async ensureAuthenticated({ account }) {
     this.bridge.addEventListener('workerEvent', this.onWorkerEvent.bind(this))
     this.log('info', '🤖 ensureAuthenticated')
-    throw new Error('normal ensureAuthenticated error')
     if (!account) {
       await this.ensureNotAuthenticated()
     }
