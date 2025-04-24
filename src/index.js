@@ -29,6 +29,9 @@ class BookToScrapeContentScript extends ContentScript {
     if (!account || !credentials) {
       await this.ensureNotAuthenticated()
     }
+    await this.showLoginFormAndWaitForAuthentication()
+    this.log('info', 'ensureAuthenticated - Login successfull !')
+    return true
   }
 
   async ensureNotAuthenticated() {
@@ -50,10 +53,13 @@ class BookToScrapeContentScript extends ContentScript {
 
   async showLoginFormAndWaitForAuthentication() {
     this.log('info', '🤖 showLoginFormAndWaitForAuthentication')
+    // Make the webview visible to the user so he can interact with the website
     await this.setWorkerState({ visible: true })
+    // This function will launch your "checkAuthenticated" repeatedly until it return true, meaning the user has logged in.
     await this.runInWorkerUntilTrue({
       method: 'waitForAuthenticated'
     })
+    // Once authenticated, the webview is hidden from the user.
     await this.setWorkerState({ visible: false })
   }
 
