@@ -15,16 +15,55 @@ const homePageUrl = "https://books.toscrape.com/"
 
 const connectedElementSelector = 'a[href="https://practicetestautomation.com/practice-test-login/"]'
 const usernameInputSelector = "#username"
+const passwordInputSelector = "#password"
+const submitButtonSelector = "#submit"
 
 class BookToScrapeContentScript extends ContentScript {
-  onWorkerReady() {
+  async onWorkerEvent({ event, payload }) {
+    if (event === 'loginSubmit') {
+      const { login, password } = payload || {}
+      // If both had been intercepted correctly, we're saving them in the store to save them on the device after the cozy account creation
+      if (login && password) {
+        this.log('info', 'Credentials successfully intercepted')
+        this.store.userCredentials = { login, password }
+      }
+    }
   }
 
-  onWorkerEvent({ event, payload }) {
+  async onWorkerReady() {
+    function addClickListener() {
+      document.body.addEventListener('click', e => {
+        const clickedElementId = e.target.getAttribute('id')
+        if (clickedElementId === 'submit') {
+          const login = document.querySelector(
+            usernameInputSelector
+          )?.value
+          const password = document.querySelector(passwordInputSelector)?.value
+          this.bridge.emit('workerEvent', {
+            event: 'loginSubmit',
+            payload: { login, password }
+          })
+        }
+      })
+    }
+    await this.waitForDomReady()
+    // We're adding the listener only if we are on the loginForm, no need to watch for other pages
+    if (
+      (await this.checkForElement(usernameInputSelector)) &&
+      (await this.checkForElement(passwordInputSelector))
+    ) {
+      this.log(
+        'info',
+        'Adding the click listener on the submit button'
+      )
+      addClickListener.bind(this)()
+    }
   }
 
   async ensureAuthenticated({ account }) {
     this.log('info', '🤖 ensureAuthenticated')
+    // This listen to the worker events, to be able to monitor and act on events like DOM changes, errors on the website or credentials submitting for example
+    this.bridge.addEventListener('workerEvent', this.onWorkerEvent.bind(this))
     const credentials = await this.getCredentials()
     if (!account || !credentials) {
       await this.ensureNotAuthenticated()
