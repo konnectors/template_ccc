@@ -108,17 +108,46 @@ class BookToScrapeContentScript extends ContentScript {
 
   async getUserDataFromWebsite() {
     this.log('info', '🤖 getUserDataFromWebsite')
+    // Check if there are some saved credentials
+    const credentials = await this.getCredentials()
+    const credentialsLogin = credentials?.login
+    // Check if we manage to intercept the used login
+    const storeLogin = this.store?.userCredentials?.login
+    // Prefer intercepted credentials over scraped data since the user could need his email to log in
+    // but once done, the website may expose username or an ID.
+    let sourceAccountIdentifier = credentialsLogin || storeLogin
+    // If for some reasons, none of them is available, we may need to scrape it on the website anyway
+    if (!sourceAccountIdentifier) {
+      sourceAccountIdentifier = await this.runInWorker('findValidSAI')
+    }
+    // sourceAccountIdentifier is mandatory.
+    // It will be the name of the cozy account and the name directory where the files are saved.
+    if (!sourceAccountIdentifier) {
+      throw new Error('Could not get a sourceAccountIdentifier')
+    }
+    return {
+      sourceAccountIdentifier: sourceAccountIdentifier
+    }
   }
 
   async fetch(context) {
     this.log('info', '🤖 fetch')
   }
 
+  async findValidSAI () {
+    this.log('info', '📍️ findValidSAI starts')
+    // As we are on a practice website, there is no specific user logged in the end.
+    // To get a scraping example we will scrape "student" to be the sourceAcountIdentifier as it is the username to use to log in.
+    const usernameElementContent = document.querySelector('strong').textContent
+    const validSAI = usernameElementContent.split('.')[0].split(' ')[1].trim()
+    return validSAI
+  }
+
 }
 
 const connector = new BookToScrapeContentScript()
 connector
-  .init({ additionalExposedMethodsNames: [] })
+  .init({ additionalExposedMethodsNames: ['findValidSAI'] })
   .catch(err => {
     log.warn(err)
   })
