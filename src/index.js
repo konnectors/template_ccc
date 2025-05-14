@@ -160,6 +160,11 @@ class BookToScrapeContentScript extends ContentScript {
       fileIdAttributes: ['vendorRef'],
       contentType: 'image/jpeg'
     })
+
+    //At this point we will navigate to the user infoPage, but as the website used for the example does not have any we'll just show how to build an identity for cozy
+    const userIdentity = await this.runInWorker('getUserIdentity')
+    // Save the fetched identity in "contact" key of an object, it is mandatory.
+    await this.saveIdentity({ contact: userIdentity })
   }
 
   async navigateToNextPage(targetedPage) {
@@ -217,6 +222,37 @@ class BookToScrapeContentScript extends ContentScript {
     }
     return pageFiles
   }
+
+  async getUserIdentity () {
+    this.log('info', '📍️ getUserIdentity starts')
+    const identity = {
+      email: ['john.doe@email.com'],
+      name: {
+        fullName: 'John Doe',
+        givenName: 'John',
+        lastName: 'Doe'
+      },
+      address: [
+        {
+          formattedAddress: "1 rue des papillons 99999 Devcity",
+          street: "1 rue des papillons",
+          postCode: "99999",
+          city: "Devcity"
+        }
+      ],
+      phone:[
+        {
+          type: 'home',
+          number: "0423156789"
+        },
+        {
+          type: 'mobile',
+          number: "0623451789"
+        }
+      ]
+    }
+    return identity
+  }
 }
 
 // Convert a price string to a float
@@ -230,7 +266,8 @@ connector
     additionalExposedMethodsNames: [
       'findValidSAI',
       'getNumberOfPages',
-      'getFiles'
+      'getFiles',
+      'getUserIdentity'
     ]
   })
   .catch(err => {
