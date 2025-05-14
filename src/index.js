@@ -7,16 +7,16 @@ Minilog.enable('BooksToScrapeCCC')
 
 // As mentionned in the documentation, booksToScrape does not have any login logic
 // To illustrate this part, we're gonne use a automation testing website that have one.
-const loginFormUrl = "https://practicetestautomation.com/practice-test-login/"
-const loginSuccessfullUrl = "https://practicetestautomation.com/logged-in-successfully/"
-const homePageUrl = "https://books.toscrape.com/"
+const loginSuccessfullUrl =
+  'https://practicetestautomation.com/logged-in-successfully/'
+const homePageUrl = 'https://books.toscrape.com/'
 
 // ELEMENTS
 
-const connectedElementSelector = 'a[href="https://practicetestautomation.com/practice-test-login/"]'
-const usernameInputSelector = "#username"
-const passwordInputSelector = "#password"
-const submitButtonSelector = "#submit"
+const connectedElementSelector =
+  'a[href="https://practicetestautomation.com/practice-test-login/"]'
+const usernameInputSelector = '#username'
+const passwordInputSelector = '#password'
 
 class BookToScrapeContentScript extends ContentScript {
   async onWorkerEvent({ event, payload }) {
@@ -35,9 +35,7 @@ class BookToScrapeContentScript extends ContentScript {
       document.body.addEventListener('click', e => {
         const clickedElementId = e.target.getAttribute('id')
         if (clickedElementId === 'submit') {
-          const login = document.querySelector(
-            usernameInputSelector
-          )?.value
+          const login = document.querySelector(usernameInputSelector)?.value
           const password = document.querySelector(passwordInputSelector)?.value
           this.bridge.emit('workerEvent', {
             event: 'loginSubmit',
@@ -52,10 +50,7 @@ class BookToScrapeContentScript extends ContentScript {
       (await this.checkForElement(usernameInputSelector)) &&
       (await this.checkForElement(passwordInputSelector))
     ) {
-      this.log(
-        'info',
-        'Adding the click listener on the submit button'
-      )
+      this.log('info', 'Adding the click listener on the submit button')
       addClickListener.bind(this)()
     }
   }
@@ -78,13 +73,18 @@ class BookToScrapeContentScript extends ContentScript {
     // To test the path where no logout is required, just change the selector to loginFormUrl
     await this.goto(loginSuccessfullUrl)
     // Waiting for elements indicating we're connected or not
-    await this.waitForElementInWorker(`${usernameInputSelector}, ${connectedElementSelector}`)
+    await this.waitForElementInWorker(
+      `${usernameInputSelector}, ${connectedElementSelector}`
+    )
     const authenticated = await this.runInWorker('checkAuthenticated')
-    if(!authenticated){
+    if (!authenticated) {
       this.log('info', 'ensureNotAuthenticated - User is already disconnected')
       return true
     }
-    await this.runInWorker('click', 'a[href="https://practicetestautomation.com/practice-test-login/"]')
+    await this.runInWorker(
+      'click',
+      'a[href="https://practicetestautomation.com/practice-test-login/"]'
+    )
     await this.waitForElementInWorker(usernameInputSelector)
     this.log('info', 'ensureNotAuthenticated - User has been disconnected')
     return true
@@ -132,9 +132,49 @@ class BookToScrapeContentScript extends ContentScript {
 
   async fetch(context) {
     this.log('info', '🤖 fetch')
+    // Check if credentials are presents in the store and save them if applicable.
+    if (this.store.userCredentials != undefined) {
+      await this.saveCredentials(this.store.userCredentials)
+    }
+    // Navigate to the products page
+    await this.goto(homePageUrl)
+    // Wait for product cards to appear on the page, confirming the page is ready to be scraped.
+    await this.waitForElementInWorker('.product_pod')
+    // For this example, we will get the products from two pages only, just to show how to work with pagination
+    // Get the number of pages available
+    const numberOfPages = await this.runInWorker('getNumberOfPages')
+    this.log('info', `numberOfPages : ${numberOfPages}`)
+    let page = 1
+    const filesToSave = []
+    // Get in a loop as long as we have pages to scrape. You would use "numberOfPage" instead of "limit" in a real sceanrio.
+    while (page < numberOfPages) {
+      const files = await this.runInWorker('getFiles')
+      filesToSave.push(...files)
+      await this.navigateToNextPage(page + 1)
+      page++
+      this.log('info', `page end of loop : ${page}`)
+    }
+    // Save the retrieved files to the cozy instance
+    await this.saveFiles(filesToSave, {
+      context,
+      fileIdAttributes: ['vendorRef'],
+      contentType: 'image/jpeg'
+    })
   }
 
-  async findValidSAI () {
+  async navigateToNextPage(targetedPage) {
+    this.log('info', '📍️ navigateToNextPage starts')
+    await this.goto(
+      `https://books.toscrape.com/catalogue/page-${targetedPage}.html`
+    )
+    // Once the element had reappeared, navigation is complete.
+    await this.waitForElementInWorker(
+      `a[href*="page-${targetedPage + 1}.html"]`
+    )
+    this.log('info', `navigation to page ${targetedPage} completed`)
+  }
+
+  async findValidSAI() {
     this.log('info', '📍️ findValidSAI starts')
     // As we are on a practice website, there is no specific user logged in the end.
     // To get a scraping example we will scrape "student" to be the sourceAcountIdentifier as it is the username to use to log in.
@@ -143,11 +183,56 @@ class BookToScrapeContentScript extends ContentScript {
     return validSAI
   }
 
+  async getNumberOfPages() {
+    this.log('info', '📍️ getNumberOfPages starts')
+    // This is one way to retrieve the number of pages for this website (50 at the moment)
+    const foundNumber = Number(
+      document.querySelector('.current').textContent.trim().split('of ')[1]
+    )
+    this.log('info', `Found ${foundNumber} pages`)
+    // But we're setting a limit of 3 pages for this example to avoid scraping all 50 pages
+    return 3
+  }
+
+  async getFiles() {
+    this.log('info', '📍️ getFiles starts')
+    const productCards = document.querySelectorAll('.product_pod')
+    const pageFiles = []
+    for (const productCard of productCards) {
+      const product = {
+        amount: normalizePrice(
+          productCard.querySelector('.price_color')?.innerHTML
+        ),
+        date: '2025-01-01',
+        vendor: 'bookstoscrape',
+        filename: productCard.querySelector('h3 a')?.getAttribute('title'),
+        fileurl:
+          'https://books.toscrape.com/' +
+          productCard.querySelector('img')?.getAttribute('src'),
+        // Usually vendorRef will be the ID of the files given by the website
+        // For this example we will just use the source attribute of the product's image.
+        vendorRef: productCard.querySelector('img')?.getAttribute('src')
+      }
+      pageFiles.push(product)
+    }
+    return pageFiles
+  }
+}
+
+// Convert a price string to a float
+function normalizePrice(price) {
+  return parseFloat(price.replace('£', '').trim())
 }
 
 const connector = new BookToScrapeContentScript()
 connector
-  .init({ additionalExposedMethodsNames: ['findValidSAI'] })
+  .init({
+    additionalExposedMethodsNames: [
+      'findValidSAI',
+      'getNumberOfPages',
+      'getFiles'
+    ]
+  })
   .catch(err => {
     log.warn(err)
   })
